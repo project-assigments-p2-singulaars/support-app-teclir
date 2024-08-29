@@ -1,34 +1,66 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using SupportApp.Data;
+using support_app.Errors;
+using SupportApp.Person;
 using SupportApp.Project;
+using SupportApp.Assignment;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    var conStrBuilder = new SqlConnectionStringBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
+    var connection = conStrBuilder.ConnectionString;
+    options.UseSqlServer(connection);
 });
-
-builder.Services.AddControllers();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDBContext>()
+    .AddErrorDescriber<CustomErrors>();
+builder.Services.AddAuthorization();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("auth", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+});
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Allowlocalhost4200", policyBuilder =>
+    {
+        policyBuilder.WithOrigins("http://localhost:4200")
+            .AllowAnyMethod().AllowCredentials();
+    });
+});
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+
 
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (builder.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();    
+    app.UseSwaggerUI();
+    builder.Configuration.AddUserSecrets<Program>();
 }
 
+app.MapIdentityApi<IdentityUser>();
+app.UseCors("Allowlocalhost4200");
 app.MapControllers();
 app.UseHttpsRedirection();
-
 
 app.Run();

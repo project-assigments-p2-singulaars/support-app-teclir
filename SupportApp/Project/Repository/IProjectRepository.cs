@@ -2,7 +2,9 @@ namespace SupportApp.Project;
 
 public interface IProjectRepository
 {
-    Task<List<Project>> GetAllProjects();
+    Task<IEnumerable<Project>> GetAllProjects();
+    Task<int> CreateProject(Project createProjectDTO);
     Task UpdateProject(Project project);
-    Task<Project> CreateProject(Project project);
+    Task<bool> ExistProject(int id);
+    Task Delete(int id);
 }

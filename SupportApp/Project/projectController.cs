@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SupportApp.Data;
 using AutoMapper;
-
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace SupportApp.Project
@@ -19,30 +19,45 @@ namespace SupportApp.Project
             _context = context;
             _mapper = mapper;
             _projectRepository = projectRepository;
+            
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllProjects()
         {
             var projects = await _projectRepository.GetAllProjects();
-            _mapper.Map<List<ProjectDTO>>(projects);
+            var projectsDTO = _mapper.Map<IEnumerable<Project>>(projects);
             return Ok(projects);
         }
-        [HttpPost]
-        public async Task<ActionResult<ProjectDTO>> CreateProject(CreateProjectDTO createProjectDto,IProjectRepository projectRepository)
+        
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<List<ProjectDTO>>> GetIdProject(int id)
         {
-            var project= _mapper.Map<Project>(createProjectDto);
-            await _projectRepository.CreateProject(project);
+            var project = await _projectRepository.ExistProject(id);
+            if (project == null)
+            {
+                return NotFound();
+
+            }
+
             return Ok(project);
         }
+
+        [HttpPost]
+            public async Task<IActionResult> CreateProject(CreateProjectDTO createProjectDTO)
+            {
+                var project = _mapper.Map<Project>(createProjectDTO);
+                await _projectRepository.CreateProject(project);
+                return Ok(project);
+        }
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateProject(int id, [FromBody]CreateProjectDTO updateProjectDTO)
+        public async Task<ActionResult> UpdateProject(int id, [FromBody]CreateProjectDTO createProjectDTO)
         {
             var project = await _context.Projects.FindAsync(id);
             if (project == null)
             {
                 return NotFound();
             }
-            _mapper.Map(updateProjectDTO,project);
+            _mapper.Map(createProjectDTO,project);
             await _projectRepository.UpdateProject(project);
             return Ok(project);
         }
@@ -54,10 +69,9 @@ namespace SupportApp.Project
             {
                 return NotFound();
             }
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
+            await _projectRepository.Delete(project.Id);
             return NoContent();
+        }
         }
     }
     
-}

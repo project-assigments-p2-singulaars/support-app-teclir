@@ -11,23 +11,35 @@ public class ProjectRepository : IProjectRepository
         _context = context;
     }
 
-    public async Task UpdateProject(Project project)
-    {
-        _context.Update(project);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task<List<Project>> GetAllProjects()
+    public async Task<IEnumerable<Project>> GetAllProjects()
     {
         return await _context.Projects.ToListAsync();
     }
-
-    public async Task<Project> CreateProject(Project project)
+    
+    public async Task<int> CreateProject(Project projectDTO)
     {
-        _context.Add(project);
+        _context.Add(projectDTO);
         await _context.SaveChangesAsync();
-        return project;
+        return projectDTO.Id;
     }
+
+    public async Task UpdateProject(Project project)
+    {
+        
+        _context.Update(project);
+        await _context.SaveChangesAsync();
+    }
+    
+    public async Task<bool> ExistProject(int id)
+    {
+        return await _context.Projects.AnyAsync(x => x.Id == id);
+    }
+
+    public async Task Delete(int id)
+    {
+        await _context.Projects.Where(x => x.Id == id).ExecuteDeleteAsync();
+    }
+
 }
     
     

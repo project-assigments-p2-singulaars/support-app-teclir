@@ -2,8 +2,8 @@ namespace SupportApp.Project;
 
 public class CreateProjectDTO
 {
-    
-    public string ProjectName { get; set; } = null!;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public DateTime InitDate { get; set; }
+    public DateTime? EndDateTime { get; set; }
 }
