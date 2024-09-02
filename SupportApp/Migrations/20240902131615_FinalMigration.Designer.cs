@@ -12,8 +12,8 @@ using SupportApp.Data;
 namespace SupportApp.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240829133349_Role")]
-    partial class Role
+    [Migration("20240902131615_FinalMigration")]
+    partial class FinalMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
