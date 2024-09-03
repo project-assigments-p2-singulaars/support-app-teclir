@@ -1,84 +1,48 @@
+# SupportApp
 
-# Support App
+SupportApp es una aplicación que gestiona proyectos, personas y asignaciones, con autenticación y autorización integradas utilizando ASP.NET Core, Entity Framework Core, y FluentValidation.
 
-## Introducción 
+## Requisitos
 
-Una compañia ha tomado la decisión de crear una herramienta de gestión de proyectos con la cuál puedan desbancar a empresas como Trello o Jira. Por el momento, como desarrolladores/as backends, nos han pedido un MVP de una API REST con el cuál podamos administrar nuestras tareas, proyectos y usuarios.
+- .NET 8.0
+- SQL Server
+- Herramientas de desarrollo como Rider o VS Code
 
-## Requerimientos funcionales
+## Instalación
 
-- Los proyectos deben de tener al menos una tarea asociada
-- Los proyecto deben tener fecha inicial y fecha de finalización tiene que actualizarse con la fecha fin de la última tarea.
-- Las tareas pueden tener un mismo nombre en diferentes proyectos
-- Las tareas deben tener fecha de inicio y fecha de finalización
-- Las tareas deben tener una forma de identificar si están realizadas o no
-- Las tareas serán genericas y existiran previamente
-- Las personas solo pueden realizar una tarea a la vez
-- Las personas pueden tener varios roles dentro de los proyectos
-- Las personas usuarias pueden asignarse a una tarea con un rol. Cuando se asigna a una tarea se actualiza el proyecto y fecha de inicio.
-- Una persona usuaria puede finalizar una tarea que tenga asignada
-- Las personas usuarias no pueden asignarse a un proyecto
-- El usuario Administrador asignará a las personas ha al menos a un proyecto
+1. **Clonar el Repositorio:**
+  - ```bash
+  - git clone [https://github.com/tu_usuario/support-app.git](https://github.com/project-assigments-p2-singulaars/support-app-teclir.git)
+  - cd SupportApp
+
+2. **Restaurar Dependencias:**
+ Ejecuta el siguiente comando para restaurar las dependencias del proyecto: dotnet restore
+
+3. **Configurar la Base de Datos:**
+Asegúrate de tener SQL Server instalado y configura la cadena de conexión en appsettings.Development.json:
+
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1433;Database=Support;User=sa;Password=<Root1234>;TrustServerCertificate=True"
+  },
+
+4. **Aplicar Migraciones:**
+Aplica las migraciones para crear la base de datos: dotnet ef database update
+
+## Ejecución 
+Para ejecutar la aplicación, utiliza el siguiente comando: dotnet run 
+
+## Endpoints API 
+
+GET /api/projects: Obtiene todos los proyectos.
+POST /api/projects: Crea un nuevo proyecto.
+GET /api/projects/{id}: Obtiene un proyecto por ID.
+PUT /api/projects/{id}: Actualiza un proyecto por ID.
+DELETE /api/projects/{id}: Elimina un proyecto por ID.
+
+Para más detalles sobre los endpoints y cómo usarlos, consulta la documentación de Swagger disponible en http://localhost:5005/swagger/index.html
 
 
-## Requerimientos técnicos
-- Incluir Repository Pattern
-- Incluir LINQ
-- Incluir AutoMapper
-- Incluir Validaciones
-- Incluir Gestión de errores
-- Incluir testing con XUnit
-- Incluir Autorización y autentificación
-- Incluir Docker
-- Incluir servicios customs
-- Incluir diseño de base de datos
-- Incluir cargar base datos
-
-## Modalidad pedagógica
-- Proyecto individual
-- Desarollo en 3 sprints
-- Fecha de finalización: 21/06
-
-## Primera sprint (martes 11/06)
-- Se debe entregar:
-  - Crud de proyectos,
-  - Repository de proyectos
-  - Base de datos
-  - Bonus track:
-    - AutoMapper
-    - Deploy en Azure
-    - Testing
-
-## Segundo sprint (lunes 17/06)
-- Se debe entregar:
-  - Crud de tareas y personas
-  - AutoMapper
-  - CORS
-  - Relaciones entre tablas
-  - Servicios customs
-  - Bonus track:
-    - Validaciones
-    - Errores
-    - Testing
-
-## Tercer sprint (Viernes 21/06)
--  Se debe entregar
-   - Autorización y autentificación
-   - Testing
-   - Validaciones
-   - Errores
-   - Bonus track:
-     - Dockerizar el proyecto
-
-## Evaluación
-- Vía pull-request en Classroom
-
-## Entregables
-- Repositorio Github:
-  - Readme con índice,contenido del repositorio, las tecnologías utilizadas, links a los recursos.
-  - Modelo lógico de la base de datos.
-  - Fichero de dump de la base de datos.
-  - Instrucciones de instalación de la aplicación
 
 
 
